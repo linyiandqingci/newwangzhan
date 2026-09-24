@@ -1,366 +1,490 @@
-.header {
-	width: 100%;
-	padding: 20px;
-}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="instap">
+    <link rel="icon" href="https://tc.lqay.cn/LightPicture/2026/03/5f64e0f0f361e19c.png">
+    <title>永久引导页</title>
+    <link href="assets/m.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/style.css">
+    <style>
+        .item {
+            transition:transform 0.3s ease-in-out,opacity 0.3s ease-in-out
+        }
+        .item:hover {
+            transform:scale(1.05);
+            opacity:0.9
+        }
+        .modal {
+            display:none;
+            position:fixed;
+            z-index:1;
+            padding-top:60px;
+            left:0;
+            top:0;
+            width:100%;
+            height:100%;
+            overflow:auto;
+            background-color:rgb(0,0,0);
+            background-color:rgba(0,0,0,0.4)
+        }
+        .modal-content {
+            margin:5% auto;
+            padding:20px;
+            border:1px solid #888;
+            width:80%;
+            max-width:700px
+        }
+        .close {
+            color:#aaa;
+            float:right;
+            font-size:28px;
+            font-weight:bold
+        }
+        .close:hover,.close:focus {
+            color:black;
+            text-decoration:none;
+            cursor:pointer
+        }
+        .web_notice {
+            display: none;
+        }
+        
+        .bg-stage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            will-change: opacity;
+        }
+        
+        .bg-current { opacity: 1; z-index: 1; }
+        .bg-next { opacity: 0; z-index: 2; }
+        
+        .header { position: relative; z-index: 5; }
+        
+        .logo {
+            position: absolute;
+            left: 50%;
+            bottom: -50px;
+            width: 100px;
+            height: 100px;
+            background-repeat: no-repeat;
+            background-size: contain;
+            margin-left: -50px;
+            border: 5px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 10px 20px 5px #e6e8ea;
+            z-index: 20;
+            background-color: #fff;
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        #app {
+            background-color: rgba(244, 246, 248, 0.92);
+            position: relative;
+            z-index: 1;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+        }
+        
+        .author-name {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            font-size: 25px;
+            line-height: 36px;
+            font-weight: 500;
+            margin-top: 55px;
+            position: relative;
+            z-index: 5;
+        }
+        .desc {
+            text-align: center;
+            position: relative;
+            z-index: 5;
+            margin-top: 4px;
+        }
+        
+        .body { position: relative; z-index: 5; }
+        
+        .tab-list {
+            width: 100%;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .tab-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 35px;
+            padding: 0 12px;
+            width: 48%;
+            background: #fff;
+            border-radius: 17px;
+            font-size: 14px;
+            line-height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .tab-item:last-child { margin-right: 0; }
+        .tab-item .text { margin-left: 6px }
+        .tab-item:before {
+            content: "";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-size: contain;
+            background-position: 50%;
+            background-repeat: no-repeat
+        }
+        .lx:before { background-image: url(../assets/lx.png) }
+        .zy:before { background-image: url(../assets/zy.png) }
+        
+        .app-list {
+            width: 100%;
+            background: #f4f6f8;
+            padding: 12px;
+            flex-wrap: wrap;
+            display: flex;
+            box-sizing: border-box;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        
+        .item {
+            width: 50%;
+            padding: 8px;
+            position: relative;
+            color: #222;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        
+        .content-wrap {
+            width: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: 17px;
+        }
+        
+        .img-wrap {
+            flex-shrink: 0;
+            width: 45px;
+            height: 45px;
+            margin-right: 10px;
+        }
+        
+        .img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        
+        .app-name {
+            font-size: 15px;
+            line-height: 20px;
+            width: 100%;
+            word-break: break-all;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            font-family: PingFang SC;
+            font-weight: 500;
+        }
+        
+        .app-sub {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+    
+        /* ========== 清辞内核毛玻璃主题 ========== */
+        html, body { min-height: 100%; background: transparent !important; }
+        body { color: #fff; }
+        #app { background: transparent !important; min-height: 100vh; }
+        .header { padding-top: 14px; }
+        .author-name { margin-top: 20px; color: #fff; text-shadow: 0 2px 14px rgba(0,0,0,.35); }
+        .desc { color: rgba(255,255,255,.82); text-shadow: 0 2px 10px rgba(0,0,0,.35); }
+        .body { padding: 0 12px 110px; }
+        .tab-list { padding: 0; gap: 10px; margin-bottom: 12px; }
+        .tab-item {
+            width: auto;
+            flex: 1;
+            margin-right: 0;
+            color: #fff;
+            background: rgba(255,255,255,.06) !important;
+            border: 1px solid rgba(255,255,255,.10);
+            box-shadow: 0 4px 12px rgba(0,0,0,.04);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .tab-item:hover { background: rgba(255,255,255,.10) !important; }
+        .app-list .item {
+            background: rgba(255,255,255,.06) !important;
+            border: 1px solid rgba(255,255,255,.10);
+            box-shadow: 0 4px 12px rgba(0,0,0,.04);
+            color: #fff !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .app-list .item:hover { background: rgba(255,255,255,.10) !important; }
+        .app-name, .app-sub { color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,.28); }
+        .modal { background: rgba(0,0,0,.52); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .modal-content {
+            background: rgba(15,30,50,.62);
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.35);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .close { color: rgba(255,255,255,.8); }
 
+        #qingciSplash {
+            background-color: #071b1d !important;
+            background-image: url("photos/beijing/1.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        #qingciSplash::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(4,16,24,.34);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        #qingciSplash .qingciSplashInner {
+            position: relative;
+            z-index: 2;
+            padding: 26px 34px;
+            border-radius: 24px;
+            background: rgba(4,22,31,.28);
+            border: 1px solid rgba(255,255,255,.20);
+            box-shadow: 0 18px 55px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.13);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        #qingciSplash .qingciSplashLy { color: #0b6b3b !important; margin-bottom: 46px; }
+        #qingciSplash .qingciSplashQc { margin-top: 0 !important; color: #82ff9d !important; }
 
+        /* ========== 最终覆盖 ========== */
+        #app {
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .body, .tab-list, .app-list { background: transparent !important; }
+        .content-wrap, .tab-item {
+            background: rgba(255,255,255,.06) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            border: 1px solid rgba(255,255,255,.10) !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,.04) !important;
+        }
+        .app-list {
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border-radius: 0 !important;
+        }
+        .logo {
+            display: block;
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(255,255,255,.8);
+            background: rgba(255,255,255,.25);
+            backdrop-filter: blur(10px);
+        }
+        .logo img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <div id="qingciSplash" aria-hidden="true">
+        <div class="qingciSplashInner">
+            <div class="qingciSplashLy">LY数据号</div>
+            <div class="qingciSplashQc">清辞内核</div>
+        </div>
+    </div>
+    <style>
+        #qingciSplash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;opacity:1;pointer-events:auto;transition:opacity .8s ease}
+        #qingciSplash .qingciSplashInner{text-align:center;transform:scale(.55);opacity:0;animation:qingciSplashIn 1.25s cubic-bezier(.22,1,.36,1) forwards}
+        #qingciSplash .qingciSplashLy,#qingciSplash .qingciSplashQc{font-family:Arial,"Microsoft YaHei",sans-serif;font-weight:700;line-height:1.15;letter-spacing:4px;text-shadow:0 0 18px rgba(105,255,139,.20),0 2px 12px rgba(0,0,0,.28)}
+        #qingciSplash .qingciSplashLy{font-size:clamp(30px,5vw,52px);color:#0b6b3b}
+        #qingciSplash .qingciSplashQc{font-size:clamp(24px,4vw,42px);color:#82ff9d;letter-spacing:5px}
+        #qingciSplash.qingciSplashOut{opacity:0;pointer-events:none}
+        @keyframes qingciSplashIn{0%{opacity:0;transform:scale(.55)}55%{opacity:1;transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
+    </style>
+    <script>
+    (function(){var s=document.getElementById('qingciSplash');if(!s)return;setTimeout(function(){s.classList.add('qingciSplashOut');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},850)},1500);})();
+    </script>
+    <div class="bg-stage">
+        <div class="bg-layer bg-current" id="bgLayer1"></div>
+        <div class="bg-layer bg-next" id="bgLayer2"></div>
+    </div>
+    
+    <div id="app">
+        <div class="header">
+            <div class="logo"><img loading="lazy" src="photos/TX.jpg" onerror="this.src='assets/zy.png'"></div><div class="author-name">引导页</div>
+            <p class="desc">永久引导页</p>
+        </div>
+        <div class="body">
+            <div class="tab-list">
+                <div class="tab-item zy"><span class="text">导航</span></div>
+                <div class="tab-item lx"><span class="text">联系</span></div>
+            </div>
+            <div class="app-list a1">
+                <a href="https://me.lqay.cn" class="item" target="_blank" ><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻413.jpg" alt=""></div><p class="app-name">个人主页</p></div></a>
+                <a href="https://blog.lqay.cn" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻1048.jpg" alt=""></div><p class="app-name">个人博客</p></div></a>
+                <a href="https://dh.lqay.cn" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻1014.jpg" alt=""></div><p class="app-name">导航网站</p></div></a>
+                <a href="https://cookie.lqay.cn" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻1086.jpg" alt=""></div><p class="app-name">MC小号</p></div></a>
+                <a href="https://i.lqay.cn" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻575.jpg" alt=""></div><p class="app-name">短网址生成器</p></div></a>
+                <a href="https://apiv2.lqay.cn" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻566.jpeg" alt=""></div><p class="app-name">免费API(99%)</p></div></a>
+                <a href="https://tc.lqay.cn" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻748.jpg" alt=""></div><p class="app-name">图床(进群可使用)</p></div></a>
+                <a href="https://vps.lqay.cc.cd" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻960.jpg" alt=""></div><p class="app-name">服务器监控面板</p></div></a>
+                <a href="https://gallery.lqay.cn/" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻216.jpg" alt=""></div><p class="app-name">画廊</p></div></a>
+            </div>
+            <div class="app-list a2">
+                <a href="javascript:void(0);" class="item" onclick="showModal('/photos/QQ.jpg')">
+                    <div class="content-wrap">
+                        <div class="img-wrap"><img loading="lazy" src="/photos/QQIcon.png" alt=""></div>
+                        <p class="app-name">我的QQ</p>
+                    </div>
+                </a>
+                <a href="https://qm.qq.com/q/RtC6VXxpCu" class="item" target="_blank">
+                    <div class="content-wrap">
+                        <div class="img-wrap"><img loading="lazy" src="/photos/QQIcon.png" alt="QQ群"></div>
+                        <div>
+                            <p class="app-name">流欺交流群</p>
+                            <span class="app-sub">950348367</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img loading="lazy" id="modalImage" src="" alt="Image" style="width:100%">
+        </div>
+    </div>
+    
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script>
+        jQuery(document).ready(function($) {
+            $(".a1").css("display", "flex");
+            $(".a2").css("display", "none");
+            $(".zy").click(function() { 
+                $(".a1").css("display", "flex"); 
+                $(".a2").css("display", "none"); 
+            });
+            $(".lx").click(function() { 
+                $(".a1").css("display", "none"); 
+                $(".a2").css("display", "flex"); 
+            });
+        });
+        
+        function showModal(imageSrc) { 
+            $("#modalImage").attr("src", imageSrc); 
+            $("#myModal").css("display", "block"); 
+        }
+        $(".close").click(function() { 
+            $("#myModal").css("display", "none"); 
+        });
+        $(window).click(function(event) { 
+            if ($(event.target).is("#myModal")) { 
+                $("#myModal").css("display", "none"); 
+            } 
+        });
+        
+        (function() {
+            const backgroundImages = Array.from({length: 15}, (_, i) => `photos/beijing/${i + 1}.webp`);
+            const fallbackBackground = 'photos/beijing/1.webp';
+            const randomBackground = backgroundImages[Math.floor(Math.random() * backgroundImages.length)] || fallbackBackground;
 
-.banner{
-margin-top:15px;
-	position: relative;
-	width: 100%;
-	height: 158px;
-	-webkit-box-align: start;
-	-ms-flex-align: start;
-	align-items: flex-start;
-	margin-bottom: 50px;
-	background-image: url(https://api.lqay.cn/api/zxsjt/?cat=heng);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: 50%;
-	padding: 20px;
-	border-radius: 16px
-}
+            const splash = document.getElementById('qingciSplash');
+            const bg1 = document.getElementById('bgLayer1');
+            const bg2 = document.getElementById('bgLayer2');
 
- .logo {
-	position: absolute;
-	left: 50%;
-	bottom: -50px;
-	width: 100px;
-	height: 100px;
-	background-repeat: no-repeat;
-	background-size: contain;
-	margin-left: -50px;
-	border: 5px solid #fff;
-	border-radius: 50%;
-	box-shadow: 0 10px 20px 5px #e6e8ea
-}
- .logo img {
-	width: 100%;
-	height: 100%;
-	border-radius: 50%;
-	-o-object-fit: cover;
-	object-fit: cover
-}
+            function applyBackground(src) {
+                if (splash) splash.style.backgroundImage = `url("${src}")`;
+                if (bg1) {
+                    bg1.style.backgroundImage = `url("${src}")`;
+                    bg1.style.opacity = '1';
+                }
+                if (bg2) bg2.style.opacity = '0';
+            }
 
-.author-name {
-     display:flex;
-     width:100%;
-     justify-content: center;
-	align-items: center;
-	font-size: 25px;
-	line-height: 36px;
-	font-weight: 500;
-	margin-top: 13px
-}
-.gender-icon{
-	display: inline-block;
-	width: 22px;
-	height: 22px;
-	margin: 0 10px 6px 0;
-	background-size: contain;
-	background-position: 50%;
-	background-repeat: no-repeat
-}
-.man {
-	background-image: url(data:image/png;base64,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)
-}
-
- .female {
-	background-image: url(data:image/png;base64,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)
-}
-
-
-
-
-
-
-.desc {
-    width: 100%
-	padding: 0 12px;
-	font-size: 14px;
-	text-align: center;
-	color: #aaa;
-	line-height: 20px;
-	margin-top: 4px
-}
-
-
- .tab-list {
-
-	width: 100%;
-	padding: 0 20px;
-	-webkit-box-pack: start;
-	-ms-flex-pack: start;
-	justify-content: flex-start
-}
-
- .tab-item, .tab-list {
-	display: -webkit-box;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-align: center;
-	-ms-flex-align: center;
-	align-items: center
-}
- .tab-item {
-	-webkit-box-pack: center;
-	-ms-flex-pack: center;
-	justify-content: center;
-	height: 35px;
-	padding: 0 12px;
-	width:34%;
-	background: #fff;
-	border-radius: 17px;
-	font-size: 14px;
-	line-height: 20px;
-	margin-right: 10px
-}
- 
- .tab-item .text {
-	margin-left: 6px
-}
- .tab-item:before {
-	content: "";
-	display: inline-block;
-	width: 16px;
-	height: 16px;
-	background-size: contain;
-	background-position: 50%;
-	background-repeat: no-repeat
-}
-
-.lx:before {
-
-	background-image: url(../assets/lx.png)
-}
-
-.dh:before {
-	background-image: url(../assets/dh.png)
-}
-
-.zy:before {
-	background-image: url(../assets/zy.png)
-}
-
-
-.app-list {
-	width: 100%;
-	background: #f4f6f8;
-	padding: 12px;
-	-ms-flex-wrap: wrap;
-	flex-wrap: wrap
-}
-.item,
-.app-list{
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	display: -webkit-box;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-pack: start;
-	-ms-flex-pack: start;
-	justify-content: flex-start;
-	-webkit-box-align: center;
-	-ms-flex-align: center;
-	align-items: center
-}
-
-.item{
-	width: 50%;
-	-webkit-box-orient: vertical;
-	-webkit-box-direction: normal;
-	-ms-flex-direction: column;
-	flex-direction: column;
-	padding: 8px;
-	position: relative;
-	color: #222
-}
-
- .content-wrap {
-	width: 100%;
-	background: #fff;
-	display: -webkit-box;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-pack: start;
-	-ms-flex-pack: start;
-	justify-content: flex-start;
-	-webkit-box-align: center;
-	-ms-flex-align: center;
-	align-items: center;
-	padding: 14px 16px;
-	border-radius: 17px
-}
-
- .img-wrap{
-	-ms-flex-negative: 0;
-	flex-shrink: 0;
-	width: 45px;
-	height: 45px;
-	margin-right: 10px
-}
-
- .item:hover{
-    width: 48%;
-    transform: scale(1.05);
-}
-
-
-
- .img-wrap img{
-	width: 100%;
-	height: 100%;
-	-o-object-fit: contain;
-	object-fit: contain;
-	border-radius: 12px
-}
-
-.app-name{
-	font-size: 15px;
-	line-height: 20px;
-	width: 100%;
-	word-break: break-all;
-	text-overflow: ellipsis;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
-	overflow: hidden;
-	font-family: PingFang SC;
-	font-weight: 500
-}
-
-
-/* ===== Qingci mobile optimization override ===== */
-
-/* keep background sharp */
-.bg-stage,.bg-layer{
-    filter:none !important;
-}
-#app{
-    background:transparent !important;
-}
-
-/* 单个卡片极淡毛玻璃，外层大容器干掉 */
-.app-list{
-    background:transparent !important;
-    backdrop-filter:none !important;
-    -webkit-backdrop-filter:none !important;
-    border-radius:0 !important;
-    border:none !important;
-    padding:12px !important;
-    overflow:visible !important;
-    box-shadow:none !important;
-}
-
-.item{
-    padding:8px !important;
-}
-
-.content-wrap{
-    background:rgba(255,255,255,.06) !important;
-    backdrop-filter:blur(8px) !important;
-    -webkit-backdrop-filter:blur(8px) !important;
-    border:1px solid rgba(255,255,255,.10) !important;
-    border-radius:22px !important;
-    box-shadow:0 4px 12px rgba(0,0,0,.04) !important;
-}
-
-/* remove extra borders */
-.app-list:before,.app-list:after,
-.content-wrap:before,.content-wrap:after{
-    display:none !important;
-}
-
-/* transparent tabs */
-.tab-item{
-    background:rgba(255,255,255,.06) !important;
-    backdrop-filter:blur(8px) !important;
-    -webkit-backdrop-filter:blur(8px) !important;
-    border:1px solid rgba(255,255,255,.10) !important;
-}
-
-/* correct avatar */
-.logo{
-    width:88px !important;
-    height:88px !important;
-    margin-left:-44px !important;
-    bottom:-44px !important;
-    overflow:hidden;
-}
-
-/* performance */
-.item,.content-wrap,.bg-layer,.logo{
-    will-change:transform,opacity;
-}
-img{
-    content-visibility:auto;
-}
-
-/* reduce hover scaling on mobile */
-.item:hover{
-    width:50% !important;
-    transform:none !important;
-}
-
-
-/* ===== final cleanup override ===== */
-
-/* 背景保持原图，不允许任何模糊 */
-body, .bg-stage, .bg-layer, .background, .background img {
-    filter: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
-/* 外层大容器彻底透明 */
-.app-list {
-    border-radius: 0 !important;
-    border: none !important;
-    background: transparent !important;
-    overflow: visible !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
-/* 单个卡片极淡毛玻璃 */
-.content-wrap {
-    background: rgba(255,255,255,.06) !important;
-    border: 1px solid rgba(255,255,255,.10) !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,.04) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    border-radius: 22px !important;
-}
-
-.app-list:before,
-.app-list:after,
-.content-wrap:before,
-.content-wrap:after {
-    display:none !important;
-}
-
-/* 删除多余矩形框 */
-.item {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
-/* 头像强制居中，不受布局影响 */
-.logo {
-    left:50% !important;
-    right:auto !important;
-    transform:translateX(-50%) !important;
-    margin-left:0 !important;
-    bottom:-45px !important;
-    z-index:99 !important;
-}
-
-/* 防止头像跟随栏目偏移 */
-.banner {
-    position:relative !important;
-}
+            const tester = new Image();
+            tester.onload = function() {
+                applyBackground(randomBackground);
+            };
+            tester.onerror = function() {
+                applyBackground(fallbackBackground);
+            };
+            tester.src = randomBackground;
+        })();
+        </script>
+    <script src="https://player.xfyun.club/js/music-player/music-player.min.js"></script>
+    <xf-music-player
+      theme="xf-pink-theme"
+      colorful-lyric="true"
+      audio-visualizer="true"
+      mode="cloud"
+      api-url="https://music.api.xfyun.club/api/v1/music/top?platform=netease&topId=3778678"
+      autoplay="true"
+      play-mode="random"
+    ></xf-music-player>
+    <script src="https://player.xfyun.club/js/yinghua.js"></script>
+</body>
+</html>
