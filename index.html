@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="instap">
+    <link rel="icon" href="https://tc.lqay.cn/LightPicture/2026/03/5f64e0f0f361e19c.png">
+    <title>LY/QC官网</title>
+    <link href="assets/m.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/style.css">
+    <style>
+        .item {
+            transition:transform 0.3s ease-in-out,opacity 0.3s ease-in-out
+        }
+        .item:hover {
+            transform:scale(1.05);
+            opacity:0.9
+        }
+        .modal {
+            display:none;
+            position:fixed;
+            z-index:1;
+            padding-top:60px;
+            left:0;
+            top:0;
+            width:100%;
+            height:100%;
+            overflow:auto;
+            background-color:rgb(0,0,0);
+            background-color:rgba(0,0,0,0.4)
+        }
+        .modal-content {
+            margin:5% auto;
+            padding:20px;
+            border:1px solid #888;
+            width:80%;
+            max-width:700px
+        }
+        .close {
+            color:#aaa;
+            float:right;
+            font-size:28px;
+            font-weight:bold
+        }
+        .close:hover,.close:focus {
+            color:black;
+            text-decoration:none;
+            cursor:pointer
+        }
+        .web_notice {
+            display: none;
+        }
+        
+        .bg-stage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            will-change: opacity;
+        }
+        
+        .bg-current { opacity: 1; z-index: 1; }
+        .bg-next { opacity: 0; z-index: 2; }
+        
+        .header { position: relative; z-index: 5; }
+        
+        .logo {
+            position: absolute;
+            left: 50%;
+            bottom: -50px;
+            width: 100px;
+            height: 100px;
+            background-repeat: no-repeat;
+            background-size: contain;
+            margin-left: -50px;
+            border: 5px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 10px 20px 5px #e6e8ea;
+            z-index: 20;
+            background-color: #fff;
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        #app {
+            background-color: rgba(244, 246, 248, 0.92);
+            position: relative;
+            z-index: 1;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+        }
+        
+        .author-name {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            font-size: 25px;
+            line-height: 36px;
+            font-weight: 500;
+            margin-top: 55px;
+            position: relative;
+            z-index: 5;
+        }
+        .desc {
+            text-align: center;
+            position: relative;
+            z-index: 5;
+            margin-top: 4px;
+        }
+        
+        .body { position: relative; z-index: 5; }
+        
+        .tab-list {
+            width: 100%;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .tab-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 35px;
+            padding: 0 12px;
+            width: 48%;
+            background: #fff;
+            border-radius: 17px;
+            font-size: 14px;
+            line-height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .tab-item:last-child { margin-right: 0; }
+        .tab-item .text { margin-left: 6px }
+        .tab-item:before {
+            content: "";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-size: contain;
+            background-position: 50%;
+            background-repeat: no-repeat
+        }
+        .lx:before { background-image: url(../assets/lx.png) }
+        .zy:before { background-image: url(../assets/zy.png) }
+        
+        .app-list {
+            width: 100%;
+            background: #f4f6f8;
+            padding: 12px;
+            flex-wrap: wrap;
+            display: flex;
+            box-sizing: border-box;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        
+        .item {
+            width: 50%;
+            padding: 8px;
+            position: relative;
+            color: #222;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        
+        .content-wrap {
+            width: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: 17px;
+        }
+        
+        .img-wrap {
+            flex-shrink: 0;
+            width: 45px;
+            height: 45px;
+            margin-right: 10px;
+        }
+        
+        .img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        
+        .app-name {
+            font-size: 15px;
+            line-height: 20px;
+            width: 100%;
+            word-break: break-all;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            font-family: PingFang SC;
+            font-weight: 500;
+        }
+        
+        .app-sub {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+    
+        /* ========== 清辞内核毛玻璃主题 ========== */
+        html, body { min-height: 100%; background: transparent !important; }
+        body { color: #fff; }
+        #app { background: transparent !important; min-height: 100vh; }
+        .header { padding-top: 14px; }
+        .author-name { margin-top: 20px; color: #fff; text-shadow: 0 2px 14px rgba(0,0,0,.35); }
+        .desc { color: rgba(255,255,255,.82); text-shadow: 0 2px 10px rgba(0,0,0,.35); }
+        .body { padding: 0 12px 110px; }
+        .tab-list { padding: 0; gap: 10px; margin-bottom: 12px; }
+        .tab-item {
+            width: auto;
+            flex: 1;
+            margin-right: 0;
+            color: #fff;
+            background: rgba(255,255,255,.06) !important;
+            border: 1px solid rgba(255,255,255,.10);
+            box-shadow: 0 4px 12px rgba(0,0,0,.04);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .tab-item:hover { background: rgba(255,255,255,.10) !important; }
+        /* 外层 item 彻底透明 */
+        .app-list .item {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            color: #fff !important;
+        }
+        .app-list .item:hover { background: transparent !important; }
+        .app-name, .app-sub { color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,.28); }
+        .modal { background: rgba(0,0,0,.52); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .modal-content {
+            background: rgba(15,30,50,.62);
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.35);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .close { color: rgba(255,255,255,.8); }
+
+        #qingciSplash {
+            background-color: #071b1d !important;
+            background-image: url("photos/beijing/1.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        #qingciSplash::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(4,16,24,.34);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        #qingciSplash .qingciSplashInner {
+            position: relative;
+            z-index: 2;
+            padding: 26px 34px;
+            border-radius: 24px;
+            background: rgba(4,22,31,.28);
+            border: 1px solid rgba(255,255,255,.20);
+            box-shadow: 0 18px 55px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.13);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        #qingciSplash .qingciSplashLy { color: #0b6b3b !important; margin-bottom: 46px; }
+        #qingciSplash .qingciSplashQc { margin-top: 0 !important; color: #82ff9d !important; }
+
+        /* ========== 最终覆盖 ========== */
+        #app {
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .body, .tab-list, .app-list { background: transparent !important; }
+        .content-wrap, .tab-item {
+            background: rgba(255,255,255,.06) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            border: 1px solid rgba(255,255,255,.10) !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,.04) !important;
+        }
+        .app-list {
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border-radius: 0 !important;
+        }
+        /* 外层 item 彻底透明，不留方框 */
+        .item, .app-list .item {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+        .logo {
+            display: block;
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(255,255,255,.8);
+            background: rgba(255,255,255,.25);
+            backdrop-filter: blur(10px);
+        }
+        .logo img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <div id="qingciSplash" aria-hidden="true">
+        <div class="qingciSplashInner">
+            <div class="qingciSplashLy">LY数据号</div>
+            <div class="qingciSplashQc">清辞内核</div>
+        </div>
+    </div>
+    <style>
+        #qingciSplash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;opacity:1;pointer-events:auto;transition:opacity .8s ease}
+        #qingciSplash .qingciSplashInner{text-align:center;transform:scale(.55);opacity:0;animation:qingciSplashIn 1.25s cubic-bezier(.22,1,.36,1) forwards}
+        #qingciSplash .qingciSplashLy,#qingciSplash .qingciSplashQc{font-family:Arial,"Microsoft YaHei",sans-serif;font-weight:700;line-height:1.15;letter-spacing:4px;text-shadow:0 0 18px rgba(105,255,139,.20),0 2px 12px rgba(0,0,0,.28)}
+        #qingciSplash .qingciSplashLy{font-size:clamp(30px,5vw,52px);color:#0b6b3b}
+        #qingciSplash .qingciSplashQc{font-size:clamp(24px,4vw,42px);color:#82ff9d;letter-spacing:5px}
+        #qingciSplash.qingciSplashOut{opacity:0;pointer-events:none}
+        @keyframes qingciSplashIn{0%{opacity:0;transform:scale(.55)}55%{opacity:1;transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
+    </style>
+    <script>
+    (function(){var s=document.getElementById('qingciSplash');if(!s)return;setTimeout(function(){s.classList.add('qingciSplashOut');setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s)},850)},1500);})();
+    </script>
+    <div class="bg-stage">
+        <div class="bg-layer bg-current" id="bgLayer1"></div>
+        <div class="bg-layer bg-next" id="bgLayer2"></div>
+    </div>
+    
+    <div id="app">
+        <div class="header">
+            <p class="desc">꧁༺林亦༻꧂</p>
+        </div>
+        <div class="body">
+            <div class="tab-list">
+                <div class="tab-item zy"><span class="text">导航</span></div>
+                <div class="tab-item lx"><span class="text">联系</span></div>
+            </div>
+            <div class="app-list a1">
+                <a href="https://wkaiw.oqzgb.com/shop/LYZDH" class="item" target="_blank" ><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻413.jpg" alt=""></div><p class="app-name">LY/QC卡网</p></div></a>
+                <a href="" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻1048.jpg" alt=""></div><p class="app-name">清辞解绑地址</p></div></a>
+                <a href="http://jwq.smfaka.xyz/gl/" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻1014.jpg" alt=""></div><p class="app-name">验号器</p></div></a>
+                <a href="https://m.wandoujia.com/mip/apps/566489/history_v10970" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻1086.jpg" alt=""></div><p class="app-name">直登号专用QQ</p></div></a>
+                <a href="https://share.feijipan.com/s/fR6Q95nv" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻575.jpg" alt=""></div><p class="app-name">微信扫码号</p></div></a>
+                <a href="https://apiv2.lqay.cn" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻566.jpeg" alt=""></div><p class="app-name">广告位</p></div></a>
+                <a href="https://tc.lqay.cn" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻748.jpg" alt=""></div><p class="app-name">广告位</p></div></a>
+                <a href="https://vps.lqay.cc.cd" class="item" target="_blank"><div class="content-wrap"><div class="img-wrap"><img loading="lazy" src="https://cdn.jsdmirror.com/gh/lqay-cn/cdn@main/img/zx/f/真寻960.jpg" alt=""></div><p class="app-name">广告位</p></div></a>
+            </div>
+            <div class="app-list a2">
+                <a href="javascript:void(0);" class="item" onclick="showModal('/photos/QQ.jpg')">
+                    <div class="content-wrap">
+                        <div class="img-wrap"><img loading="lazy" src="/photos/TG.png" alt=""></div>
+                        <p class="app-name">清辞TG</p>
+                    </div>
+                </a>
+                <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=n1pxFH0ubQCouGj%2BPFUKP7lkIfEj84S5ILkBXZU0Ka8ngutnDE0AOlCZJ4BgETAp&busi_data=eyJncm91cENvZGUiOiI3NTI5ODg4NzUiLCJ0b2tlbiI6IlVqa0FMK1J0dkRSdEEzRmlPSlNBcnVrMko3SGszL3RQUGlRdUNtZTNsMHZqQk9UeGJPMzJ1VUw0QklyUXlyTzAiLCJ1aW4iOiIzMTg5NDE4NzI3In0%3D&data=Z7ScbJyByC97fmm5w0wtCOyM_KT1K5Ny5VJEOS1LtKOJ3goTtJWwKHQ_S4SnuxQbL_c9vcX3aZK7sJDZk1HSWA&svctype=4&tempid=h5_group_info" class="item" target="_blank">
+                    <div class="content-wrap">
+                        <div class="img-wrap"><img loading="lazy" src="/photos/QQIcon.png" alt="QQ群"></div>
+                        <div>
+                            <p class="app-name">清辞交流群</p>
+                            <span class="app-sub">950348367</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img loading="lazy" id="modalImage" src="" alt="Image" style="width:100%">
+        </div>
+    </div>
+    
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script>
+        jQuery(document).ready(function($) {
+            $(".a1").css("display", "flex");
+            $(".a2").css("display", "none");
+            $(".zy").click(function() { 
+                $(".a1").css("display", "flex"); 
+                $(".a2").css("display", "none"); 
+            });
+            $(".lx").click(function() { 
+                $(".a1").css("display", "none"); 
+                $(".a2").css("display", "flex"); 
+            });
+        });
+        
+        function showModal(imageSrc) { 
+            $("#modalImage").attr("src", imageSrc); 
+            $("#myModal").css("display", "block"); 
+        }
+        $(".close").click(function() { 
+            $("#myModal").css("display", "none"); 
+        });
+        $(window).click(function(event) { 
+            if ($(event.target).is("#myModal")) { 
+                $("#myModal").css("display", "none"); 
+            } 
+        });
+        
+        (function() {
+            const backgroundImages = Array.from({length: 15}, (_, i) => `photos/beijing/${i + 1}.webp`);
+            const fallbackBackground = 'photos/beijing/1.webp';
+            const randomBackground = backgroundImages[Math.floor(Math.random() * backgroundImages.length)] || fallbackBackground;
+
+            const splash = document.getElementById('qingciSplash');
+            const bg1 = document.getElementById('bgLayer1');
+            const bg2 = document.getElementById('bgLayer2');
+
+            function applyBackground(src) {
+                if (splash) splash.style.backgroundImage = `url("${src}")`;
+                if (bg1) {
+                    bg1.style.backgroundImage = `url("${src}")`;
+                    bg1.style.opacity = '1';
+                }
+                if (bg2) bg2.style.opacity = '0';
+            }
+
+            const tester = new Image();
+            tester.onload = function() {
+                applyBackground(randomBackground);
+            };
+            tester.onerror = function() {
+                applyBackground(fallbackBackground);
+            };
+            tester.src = randomBackground;
+        })();
+        </script>
+    <script src="https://player.xfyun.club/js/music-player/music-player.min.js"></script>
+    <xf-music-player
+      theme="xf-pink-theme"
+      colorful-lyric="true"
+      audio-visualizer="true"
+      mode="cloud"
+      api-url="https://music.api.xfyun.club/api/v1/music/top?platform=netease&topId=3778678"
+      autoplay="true"
+      play-mode="random"
+    ></xf-music-player>
+    <script src="https://player.xfyun.club/js/yinghua.js"></script>
+</body>
+</html>
