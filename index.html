@@ -259,15 +259,16 @@
             -webkit-backdrop-filter: blur(8px);
         }
         .tab-item:hover { background: rgba(255,255,255,.10) !important; }
+        /* 外层 item 彻底透明 */
         .app-list .item {
-            background: rgba(255,255,255,.06) !important;
-            border: 1px solid rgba(255,255,255,.10);
-            box-shadow: 0 4px 12px rgba(0,0,0,.04);
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
             color: #fff !important;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
         }
-        .app-list .item:hover { background: rgba(255,255,255,.10) !important; }
+        .app-list .item:hover { background: transparent !important; }
         .app-name, .app-sub { color: #fff !important; text-shadow: 0 2px 8px rgba(0,0,0,.28); }
         .modal { background: rgba(0,0,0,.52); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .modal-content {
@@ -331,6 +332,14 @@
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
             border-radius: 0 !important;
+        }
+        /* 外层 item 彻底透明，不留方框 */
+        .item, .app-list .item {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
         }
         .logo {
             display: block;
